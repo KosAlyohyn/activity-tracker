@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -94,7 +94,7 @@ jobs:
       DATABASE_PASSWORD: postgres
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install PostgreSQL development libraries
         run: |
