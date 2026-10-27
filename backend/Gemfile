@@ -38,5 +38,12 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "rspec-rails", "~> 8.0"
-  gem 'factory_bot_rails', '~> 6.5'
+  gem "factory_bot_rails", "~> 6.5"
+
+  gem "rubocop-rails", "~> 2.38.0", require: false
+  gem "rubocop-rspec", "~> 3.10.2", require: false
+  gem "rubocop-performance", "~> 1.27.0", require: false
+  gem "rubocop-thread_safety", "~> 0.7.3", require: false
+  gem "rubocop-factory_bot", "~> 2.28.0", require: false
+  gem "rubocop-rspec_rails", "~> 2.32.0", require: false
 end
