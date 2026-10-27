@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_27_162059) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_27_163542) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,6 +44,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_27_162059) do
     t.index ["unit_id"], name: "index_activity_templates_on_unit_id"
   end
 
+  create_table "entries", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.decimal "value", precision: 12, scale: 3, null: false
+    t.datetime "performed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_id", "performed_at"], name: "index_entries_on_activity_id_and_performed_at"
+    t.check_constraint "value > 0::numeric", name: "entries_value_positive"
+  end
+
   create_table "unit_categories", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -66,5 +76,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_27_162059) do
   add_foreign_key "activities", "units", on_delete: :restrict
   add_foreign_key "activity_templates", "activity_categories", on_delete: :restrict
   add_foreign_key "activity_templates", "units", on_delete: :restrict
+  add_foreign_key "entries", "activities", on_delete: :restrict
   add_foreign_key "units", "unit_categories"
 end

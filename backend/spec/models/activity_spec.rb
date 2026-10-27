@@ -11,6 +11,15 @@ RSpec.describe Activity, type: :model do
     it "belongs to a unit" do
       expect(activity.unit).to be_a(Unit)
     end
+
+    it "has many entries" do
+      expect(described_class.reflect_on_association(:entries).macro).to eq(:has_many)
+    end
+
+    it "restricts deletion when entries exist" do
+      expect(described_class.reflect_on_association(:entries).options[:dependent])
+        .to eq(:restrict_with_exception)
+    end
   end
 
   describe "validations" do
@@ -134,6 +143,29 @@ RSpec.describe Activity, type: :model do
 
       it "returns true" do
         expect(activity).to be_archived
+      end
+    end
+  end
+
+  describe "deletion" do
+    subject(:destroy_activity) { activity.destroy! }
+
+    let!(:activity) { FactoryBot.create(:activity) }
+
+    context "when the activity has entries" do
+      before do
+        FactoryBot.create(:entry, activity: activity)
+      end
+
+      it "raises an exception" do
+        expect { destroy_activity }
+          .to raise_error(ActiveRecord::DeleteRestrictionError)
+      end
+    end
+
+    context "when the activity has no entries" do
+      it "deletes the activity" do
+        expect { destroy_activity }.to change(described_class, :count).by(-1)
       end
     end
   end
