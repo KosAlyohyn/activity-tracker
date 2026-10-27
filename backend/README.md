@@ -4,6 +4,13 @@ Rails API with PostgreSQL, Solid Queue for background jobs, and Solid Cache for
 database-backed caching. Mail, WebSocket, file upload, and rich text frameworks are
 not loaded. The CORS initializer is retained for frontend integration.
 
+## Docker development
+
+Use the root [Dockerization guide](../README.md#dockerization) to build and start
+the API and PostgreSQL with Docker Compose. Run Compose commands from the
+repository root. The development image is defined in `Dockerfile.dev` and uses
+Ruby 4.0.7; application source is mounted into `/app`.
+
 ## Credentials
 
 Credentials are separate for each Rails environment:
