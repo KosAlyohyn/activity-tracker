@@ -1,0 +1,33 @@
+# Rails credentials encryption keys
+/config/master.key
+/config/credentials/*.key
+
+# Local environment variables
+.env
+.env.*
+!.env.example
+
+# Bundler configuration and installed gems
+/.bundle/
+/vendor/bundle/
+
+# Logs, temporary files, and runtime storage
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+/storage/*
+!/storage/.keep
+
+# Local databases
+*.sqlite3
+*.sqlite3-*
+
+# Generated assets and test coverage
+/public/assets/
+/coverage/
+
+# Editor and OS files
+.DS_Store
+*.swp
+*.swo
