@@ -10,9 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_27_151133) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_27_162059) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "activities", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "activity_category_id", null: false
+    t.bigint "unit_id", null: false
+    t.datetime "archived_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_category_id"], name: "index_activities_on_activity_category_id"
+    t.index ["name"], name: "index_active_activities_on_name", unique: true, where: "(archived_at IS NULL)"
+    t.index ["unit_id"], name: "index_activities_on_unit_id"
+  end
+
+  create_table "activity_categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_activity_categories_on_name", unique: true
+  end
+
+  create_table "activity_templates", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "activity_category_id", null: false
+    t.bigint "unit_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_category_id"], name: "index_activity_templates_on_activity_category_id"
+    t.index ["name"], name: "index_activity_templates_on_name", unique: true
+    t.index ["unit_id"], name: "index_activity_templates_on_unit_id"
+  end
 
   create_table "unit_categories", force: :cascade do |t|
     t.string "name", null: false
@@ -32,5 +62,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_27_151133) do
     t.index ["unit_category_id"], name: "index_units_on_unit_category_id"
   end
 
+  add_foreign_key "activities", "activity_categories", on_delete: :restrict
+  add_foreign_key "activities", "units", on_delete: :restrict
+  add_foreign_key "activity_templates", "activity_categories", on_delete: :restrict
+  add_foreign_key "activity_templates", "units", on_delete: :restrict
   add_foreign_key "units", "unit_categories"
 end
