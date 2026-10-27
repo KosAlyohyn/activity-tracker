@@ -3,8 +3,6 @@ module Api
     class HealthController < ApplicationController
       def index
         render json: { status: "ok" }
-
-        # test
       end
     end
   end
