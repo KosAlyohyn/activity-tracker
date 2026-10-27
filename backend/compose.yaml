@@ -1,33 +1,34 @@
+name: activity-tracker
 services:
   db:
     image: postgres:18
     restart: unless-stopped
     environment:
-      POSTGRES_USER: activity_tracker
-      POSTGRES_PASSWORD: development_password
-      POSTGRES_DB: activity_tracker_development
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U activity_tracker -d activity_tracker_development"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   api:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile.dev
     command: bin/rails server -b 0.0.0.0
     ports:
       - "3000:3000"
     volumes:
-      - ./backend:/app
+      - .:/app
     environment:
-      RAILS_ENV: development
-      DATABASE_HOST: db
-      DATABASE_USERNAME: activity_tracker
-      DATABASE_PASSWORD: development_password
+      RAILS_ENV: ${RAILS_ENV}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
     depends_on:
       db:
         condition: service_healthy

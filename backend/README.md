@@ -6,10 +6,15 @@ not loaded. The CORS initializer is retained for frontend integration.
 
 ## Docker development
 
-Use the root [Dockerization guide](../README.md#dockerization) to build and start
-the API and PostgreSQL with Docker Compose. Run Compose commands from the
-repository root. The development image is defined in `Dockerfile.dev` and uses
-Ruby 4.0.7; application source is mounted into `/app`.
+Use the root [development guide](../README.md#start-development) to build and start
+the API and PostgreSQL with Docker Compose. Run Compose commands from `backend/`
+and initialize `.env` from `.env.example` before starting. The development image
+is defined in `Dockerfile.dev` and uses Ruby 4.0.7; application source is mounted
+into `/app`.
+
+`GET /api/v1/health` returns HTTP `200` with `{"status":"ok"}`. The Rails `/up`
+endpoint remains available. Tests use RSpec; see the root
+[common commands](../README.md#common-commands) for running them in Docker.
 
 ## Credentials
 

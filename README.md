@@ -9,26 +9,35 @@ Install Docker with Docker Compose support and start the Docker engine. Obtain
 `backend/config/credentials/development.key` securely as described in the
 [credentials instructions](backend/README.md#credentials).
 
-Run these commands from the repository root:
+Run these commands from the repository root to configure and start the backend:
 
 ```sh
+cd backend
+cp .env.example .env
 docker compose build api
 docker compose run --rm api bin/rails db:prepare
 docker compose up -d
 ```
 
-The API is available at [localhost:3000](http://localhost:3000). Check its health:
+The API is available at [localhost:3000](http://localhost:3000). Check the containers
+and API health:
 
 ```sh
 docker compose ps
-curl --fail http://localhost:3000/up
+curl --fail http://localhost:3000/api/v1/health
 ```
 
+`GET /api/v1/health` returns HTTP `200` with `{"status":"ok"}`. The Rails health
+endpoint `GET /up` also remains available. These endpoints do not check database
+connectivity.
+
 The `api` service waits for the `db` health check before starting. Backend source
-is mounted from `./backend` into `/app`, so local code changes are available in
+is mounted from the `backend/` directory into `/app`, so local code changes are available in
 the container. Rebuild the API image after changing gem dependencies.
 
 ### Common commands
+
+Run these commands from `backend/`:
 
 ```sh
 # Follow API logs
@@ -40,8 +49,9 @@ docker compose exec api bin/rails console
 # Apply database migrations
 docker compose exec api bin/rails db:prepare
 
-# Prepare the test database and run tests
-docker compose exec -e RAILS_ENV=test api bin/rails db:prepare test
+# Prepare the test database and run RSpec
+docker compose exec -e RAILS_ENV=test api bin/rails db:prepare
+docker compose exec -e RAILS_ENV=test api bundle exec rspec
 
 # Stop the environment and retain database data
 docker compose down
@@ -55,6 +65,7 @@ Docker volume mounted at `/var/lib/postgresql`.
 
 The database name is `activity_tracker_development`. Compose supplies
 `DATABASE_HOST`, `DATABASE_USERNAME`, and `DATABASE_PASSWORD` to the API. The
-credentials in `compose.yaml` are for local development only.
+values come from `backend/.env`, initialized from `.env.example`. Its example
+credentials are for local development only. Keep `.env` out of Git.
 
 `docker compose down -v` removes the database volume and its data.
