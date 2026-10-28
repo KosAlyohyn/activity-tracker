@@ -20,6 +20,15 @@ RSpec.describe Activity, type: :model do
       expect(described_class.reflect_on_association(:entries).options[:dependent])
         .to eq(:restrict_with_exception)
     end
+
+    it "has many goals" do
+      expect(described_class.reflect_on_association(:goals).macro).to eq(:has_many)
+    end
+
+    it "restricts deletion when goals exist" do
+      expect(described_class.reflect_on_association(:goals).options[:dependent])
+        .to eq(:restrict_with_exception)
+    end
   end
 
   describe "validations" do
@@ -166,6 +175,17 @@ RSpec.describe Activity, type: :model do
     context "when the activity has no entries" do
       it "deletes the activity" do
         expect { destroy_activity }.to change(described_class, :count).by(-1)
+      end
+    end
+
+    context "when the activity has goals" do
+      before do
+        FactoryBot.create(:goal, activity: activity)
+      end
+
+      it "raises an exception" do
+        expect { destroy_activity }
+          .to raise_error(ActiveRecord::DeleteRestrictionError)
       end
     end
   end

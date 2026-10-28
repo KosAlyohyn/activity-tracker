@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_27_163542) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_28_093249) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -54,6 +54,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_27_163542) do
     t.check_constraint "value > 0::numeric", name: "entries_value_positive"
   end
 
+  create_table "goal_versions", force: :cascade do |t|
+    t.bigint "goal_id", null: false
+    t.decimal "target_value", precision: 12, scale: 3, null: false
+    t.datetime "effective_from", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["goal_id", "effective_from"], name: "index_goal_versions_on_goal_and_effective_from", unique: true
+    t.check_constraint "target_value > 0::numeric", name: "goal_versions_target_value_positive"
+  end
+
+  create_table "goals", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.string "period_type", null: false
+    t.string "period_unit", null: false
+    t.integer "period_value", default: 1, null: false
+    t.datetime "archived_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_id", "period_type", "period_unit", "period_value"], name: "index_goals_on_active_activity_and_period", unique: true, where: "(archived_at IS NULL)"
+    t.index ["activity_id"], name: "index_goals_on_activity_id"
+    t.check_constraint "period_value > 0", name: "goals_period_value_positive"
+  end
+
   create_table "unit_categories", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -77,5 +100,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_27_163542) do
   add_foreign_key "activity_templates", "activity_categories", on_delete: :restrict
   add_foreign_key "activity_templates", "units", on_delete: :restrict
   add_foreign_key "entries", "activities", on_delete: :restrict
+  add_foreign_key "goal_versions", "goals", on_delete: :restrict
+  add_foreign_key "goals", "activities", on_delete: :restrict
   add_foreign_key "units", "unit_categories"
 end
