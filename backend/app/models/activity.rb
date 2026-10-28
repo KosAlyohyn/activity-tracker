@@ -3,6 +3,7 @@ class Activity < ApplicationRecord
   belongs_to :unit
 
   has_many :entries, dependent: :restrict_with_exception
+  has_many :goals, dependent: :restrict_with_exception
 
   scope :active, -> { where(archived_at: nil) }
   scope :archived, -> { where.not(archived_at: nil) }
