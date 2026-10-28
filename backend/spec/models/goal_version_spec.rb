@@ -105,4 +105,34 @@ RSpec.describe GoalVersion, type: :model do
       end
     end
   end
+
+  describe "immutability" do
+    subject(:goal_version) do
+      FactoryBot.create(:goal_version, effective_from: effective_from)
+    end
+
+    context "when the version is already effective" do
+      let(:effective_from) { 1.day.ago }
+
+      it "cannot be updated" do
+        expect(goal_version.update(target_value: 200)).to be(false)
+      end
+
+      it "cannot be destroyed" do
+        expect(goal_version.destroy).to be(false)
+      end
+    end
+
+    context "when the version is scheduled for the future" do
+      let(:effective_from) { 1.day.from_now }
+
+      it "can be updated" do
+        expect(goal_version.update(target_value: 200)).to be(true)
+      end
+
+      it "can be destroyed" do
+        expect(goal_version.destroy).to be_truthy
+      end
+    end
+  end
 end

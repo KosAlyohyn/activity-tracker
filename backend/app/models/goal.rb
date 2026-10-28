@@ -4,6 +4,8 @@ class Goal < ApplicationRecord
 
   belongs_to :activity
 
+  has_many :goal_versions, dependent: :restrict_with_exception
+
   scope :active, -> { where(archived_at: nil) }
   scope :archived, -> { where.not(archived_at: nil) }
 
@@ -20,5 +22,39 @@ class Goal < ApplicationRecord
 
   def archived?
     archived_at.present?
+  end
+
+  def version_at(time)
+    goal_versions
+      .where(effective_from: ..time)
+      .order(effective_from: :desc)
+      .first
+  end
+
+  def current_version
+    version_at(Time.current)
+  end
+
+  def next_version
+    goal_versions
+      .where("effective_from > ?", Time.current)
+      .order(:effective_from)
+      .first
+  end
+
+  def replace_next_version!(target_value:)
+    version = next_version
+
+    raise ActiveRecord::RecordNotFound, "No scheduled goal version found" unless version
+
+    version.update!(target_value: target_value)
+    version
+  end
+
+  def schedule_version!(target_value:, effective_from:)
+    goal_versions.create!(
+      target_value: target_value,
+      effective_from: effective_from
+    )
   end
 end
