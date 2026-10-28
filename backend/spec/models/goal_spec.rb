@@ -405,17 +405,19 @@ RSpec.describe Goal, type: :model do
   end
 
   describe "#schedule_version!" do
-    around do |example|
-      travel_to(Time.zone.local(2026, 11, 1, 12, 0, 0)) do
-        example.run
-      end
-    end
-
     subject(:schedule_version) do
       goal.schedule_version!(
         target_value: target_value,
         effective_from: effective_from
       )
+    end
+
+    before do
+      travel_to(Time.zone.parse('2026-11-01'))
+    end
+
+    after do
+      travel_back
     end
 
     let(:goal) { FactoryBot.create(:goal) }
